@@ -1,0 +1,25 @@
+
+notas = {
+    1: {"folio": 1, "titulo": "Nota 1", "contenido": "Contenido de la Nota 1", "cancelada": False},
+    2: {"folio": 2, "titulo": "Nota 2", "contenido": "Contenido de la Nota 2", "cancelada": True},
+    3: {"folio": 3, "titulo": "Nota 3", "contenido": "Contenido de la Nota 3", "cancelada": False},
+}
+
+def consultar_nota_por_folio(folio):
+    if folio in notas:
+        nota = notas[folio]
+        if nota["cancelada"]:
+            print(f"Nota {folio} está cancelada y no se puede consultar.")
+        else:
+            print(f"Detalles de la Nota {folio}:")
+            print(f"Título: {nota['titulo']}")
+            print(f"Contenido: {nota['contenido']}")
+    else:
+        print(f"La Nota {folio} no se encuentra en el sistema.")
+
+# Solicitar al usuario el folio a consultar
+try:
+    folio = int(input("Ingrese el folio de la nota a consultar: "))
+    consultar_nota_por_folio(folio)
+except ValueError:
+    print("Ingrese un número de folio válido.")
