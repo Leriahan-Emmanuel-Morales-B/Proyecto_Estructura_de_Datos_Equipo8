@@ -503,10 +503,10 @@ def main():
             recuperar_nota()
         elif opcion == '5':
             confirmacion_salir = input("¿Está seguro que desea salir? (S. Si / N. No): ")
-            while confirmacion.upper() not in ('S', 'N'):
+            while confirmacion_salir.upper() not in ('S', 'N'):
                 print("Opción no válida. Por favor, seleccione 'S' para confirmar la salida o 'N' para cancelar.")
-                confirmacion = input("¿Está seguro que desea salir? (S/N): ")
-                
+                confirmacion_salir = input("¿Está seguro que desea salir? (S/N): ")
+
             if confirmacion_salir.upper() == 'S':
                 guardar_estado()
                 print("\nSaliendo del programa...")
@@ -519,4 +519,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
