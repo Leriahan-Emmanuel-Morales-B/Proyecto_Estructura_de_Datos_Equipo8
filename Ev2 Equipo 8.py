@@ -166,6 +166,7 @@ def consulta_por_periodo():
                 fecha_inicial = input("Ingrese la fecha inicial (DD-MM-YYYY) o presione Enter para omitirla: ")
                 if not fecha_inicial:
                     fecha_inicial = datetime.datetime(2000, 1, 1)  # Fecha por defecto: 01-01-2000
+                    print("Fecha inicial asume el valor de 01-01-2000.")
                     break
                 else:
                     fecha_inicial = datetime.datetime.strptime(fecha_inicial, "%d-%m-%Y")
@@ -178,6 +179,7 @@ def consulta_por_periodo():
                 fecha_final = input("Ingrese la fecha final (DD-MM-YYYY) o presione Enter para omitirla: ")
                 if not fecha_final:
                     fecha_final = datetime.datetime.now()
+                    print(f"La fecha final asume el valor de {fecha_final.strftime('%d-%m-%Y')}")
                     break
                 else:
                     fecha_final = datetime.datetime.strptime(fecha_final, "%d-%m-%Y")
@@ -236,7 +238,7 @@ def consulta_por_folio():
             elif nota_encontrada and 'cancelada' in nota_encontrada:
                 print(f"\nLa nota con folio {folio} está cancelada y no se puede consultar.")
             else:
-                print("\n*****ERROR: La nota no existe.*****")
+                print("\n*****ERROR: La nota no existe2.*****")
             break
         except ValueError:
             print("\n*****ERROR: Ingrese un número de folio válido.*****")
