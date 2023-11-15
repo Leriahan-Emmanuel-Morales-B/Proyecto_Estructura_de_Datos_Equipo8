@@ -444,14 +444,14 @@ def consultar_notas_por_periodo():
         try:
             conexion = sqlite3.connect("PIA_SEMB_1799759.db")
             cursor = conexion.cursor()              
-            cursor.execute("SELECT Folio, strftime('%d-%m-%Y', Fecha), Clave_Cliente, Monto FROM Notas WHERE (Fecha BETWEEN ? AND ?) AND Cancelada = 0", (fecha_inicial, fecha_final))
+            cursor.execute("SELECT n.Folio, strftime('%d-%m-%Y', n.Fecha), Nombre_Cliente, Monto FROM Notas n INNER JOIN Clientes c ON n.Clave_Cliente=c.Clave_Cliente WHERE Suspendido = 0 AND (n.Fecha BETWEEN ? AND ?) AND Cancelada = 0", (fecha_inicial, fecha_final))
             notas = cursor.fetchall()
 
             if notas:
                 monto_promedio = sum(nota[3] for nota in notas) / len(notas)
                 print("Notas registradas en el período:")
                 for nota in notas:
-                    print(f"Folio: {nota[0]}, Fecha: {nota[1]}, Clave de Cliente: {nota[2]}, Monto: {nota[3]}")
+                    print(f"Folio: {nota[0]}, Fecha: {nota[1]}, Nombre del Cliente: {nota[2]}, Monto: {nota[3]}")
 
                 print(f"Monto promedio de las notas en el período: {monto_promedio}")
 
@@ -651,7 +651,6 @@ def suspender_cliente():
             confirmacion = input("¿Desea suspender a este cliente? (S/N): ")
 
             if confirmacion.upper() == 'S':
-                # Suspender al cliente.
                 cursor.execute("UPDATE Clientes SET Suspendido = 1 WHERE Clave_Cliente = ?", (clave_cliente,))
                 conexion.commit()
                 print("Cliente suspendido con éxito.")
@@ -1493,18 +1492,14 @@ def promedio_montos_notas():
 
         conexion = sqlite3.connect("PIA_SEMB_1799759.db")
         cursor = conexion.cursor()
-        
-        cursor.execute("SELECT Monto, Fecha FROM Notas")
+        cursor.execute("SELECT Monto, strftime('%d-%m-%Y', Fecha) FROM Notas WHERE (Fecha BETWEEN ? AND ?)", (fecha_inicial, fecha_final))
         notas = cursor.fetchall()
         
-        df_notas = pd.DataFrame(notas, columns=["Monto", "Fecha"])
-        
-        df_notas['Fecha'] = pd.to_datetime(df_notas['Fecha'], format="%d-%m-%Y").dt.date
-        df_notas = df_notas[(df_notas['Fecha'] >= fecha_inicial) & (df_notas['Fecha'] <= fecha_final)]
-        
-        if df_notas.empty:
+        if not notas:
             print("No hay datos disponibles para los parámetros proporcionados.")
             return
+        
+        df_notas = pd.DataFrame(notas, columns=["Monto", "Fecha"])
 
         promedio = df_notas['Monto'].mean()
 
