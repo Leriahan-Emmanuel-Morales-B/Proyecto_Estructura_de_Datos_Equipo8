@@ -214,7 +214,6 @@ def registrar_nota():
         cursor = conexion.cursor()
         for clave_servicio in servicios_seleccionados:
             cursor.execute("INSERT INTO Detalles_Nota(Folio, Clave_Servicio) VALUES (?, ?)",(folio, clave_servicio))
-            #Clave_Detalle = cursor.lastrowid
             conexion.commit()
     except Error as e:
         print(e)
@@ -310,7 +309,7 @@ def cancelar_nota():
                 break
 
         if not clave_valida:
-            print("Clave de servicio no válida.")
+            print("Clave de nota no válida.")
             return
 
         cursor.execute("SELECT * FROM Notas WHERE Folio = ? AND Cancelada = 0", (clave_seleccionada,))
@@ -348,9 +347,8 @@ def recuperar_nota():
     try:
         conexion = sqlite3.connect("PIA_SEMB_1799759.db")
         cursor = conexion.cursor()
-        
         cursor.execute("SELECT * FROM Notas WHERE Cancelada = 1")
-        notas_canceladas = cursor.fetchall()  # Usar fetchall para obtener todas las filas
+        notas_canceladas = cursor.fetchall()  
 
         if not notas_canceladas:
             print("No se encontraron notas canceladas.")
@@ -444,7 +442,7 @@ def consultar_notas_por_periodo():
         try:
             conexion = sqlite3.connect("PIA_SEMB_1799759.db")
             cursor = conexion.cursor()              
-            cursor.execute("SELECT n.Folio, strftime('%d-%m-%Y', n.Fecha), Nombre_Cliente, Monto FROM Notas n INNER JOIN Clientes c ON n.Clave_Cliente=c.Clave_Cliente WHERE Suspendido = 0 AND (n.Fecha BETWEEN ? AND ?) AND Cancelada = 0", (fecha_inicial, fecha_final))
+            cursor.execute("SELECT n.Folio, strftime('%d-%m-%Y', n.Fecha), Nombre_Cliente, Monto FROM Notas n INNER JOIN Clientes c ON n.Clave_Cliente=c.Clave_Cliente WHERE (n.Fecha BETWEEN ? AND ?) AND Cancelada = 0", (fecha_inicial, fecha_final))
             notas = cursor.fetchall()
 
             if notas:
@@ -1163,13 +1161,11 @@ def listar_servicios_por_nombre():
             exportar_opcion = input("¿Desea exportar el reporte a un archivo CSV, Excel o regresar al menú de reportes? (1. CSV/ 2. Excel/ 3. Regresar): ")
             if exportar_opcion == "1":
                 fecha_actual_procesada = obtener_fecha_actual().strftime("%d%m%Y")
-                #fecha_actual = obtener_fecha_actual()
                 nombre_archivo = f"ReporteServiciosPorNombre_{fecha_actual_procesada}.csv"
                 df.to_csv(nombre_archivo, index=False)
                 print(f"El reporte ha sido exportado a '{nombre_archivo}'")
             elif exportar_opcion == "2":
                 fecha_actual_procesada = obtener_fecha_actual().strftime("%d%m%Y")
-                #fecha_actual = obtener_fecha_actual()
                 nombre_archivo = f"ReporteServiciosPorNombre_{fecha_actual_procesada}.xlsx"
                 df.to_excel(nombre_archivo, index=False)
                 print(f"El reporte ha sido exportado a '{nombre_archivo}'")
@@ -1256,7 +1252,7 @@ def menu_servicios():
 
                     if confirmacion_salir.upper() == 'S':
                         print("\nSaliendo de Listado de servicios...")
-                        break  # Salir del ciclo while
+                        break  
                     elif confirmacion_salir.upper() == 'N':
                         print("\nVolviendo al menú anterior...")
                         continue
@@ -1338,8 +1334,7 @@ def servicios_mas_prestados():
             return
 
         print(f"Los {cantidad} servicios más prestados en el período:")
-        #for resultado in resultados:
-            #print(f"Nombre del Servicio: {resultado[0]}, Cantidad: {resultado[1]}")
+
         df = pd.DataFrame(resultados, columns=["Nombre del servicio", "Cantidad"])
         
         print(df)
@@ -1427,8 +1422,7 @@ def clientes_con_mas_notas():
             return
 
         print(f"Los {cantidad} clientes con más notas en el período:")
-        #for resultado in resultados:
-            #print(f"Nombre del Cliente: {resultado[0]}, Cantidad de Notas: {resultado[1]}")
+
         df = pd.DataFrame(resultados, columns=["Nombre del cliente", "Cantidad de notas"])
         print(df)
             
@@ -1492,7 +1486,7 @@ def promedio_montos_notas():
 
         conexion = sqlite3.connect("PIA_SEMB_1799759.db")
         cursor = conexion.cursor()
-        cursor.execute("SELECT Monto, strftime('%d-%m-%Y', Fecha) FROM Notas WHERE (Fecha BETWEEN ? AND ?)", (fecha_inicial, fecha_final))
+        cursor.execute("SELECT Monto, strftime('%d-%m-%Y', Fecha) FROM Notas WHERE (Fecha BETWEEN ? AND ?) AND Cancelada = 0", (fecha_inicial, fecha_final))
         notas = cursor.fetchall()
         
         if not notas:
