@@ -480,10 +480,7 @@ def consultar_notas_por_periodo():
                     print("Opción no válida. Por favor, seleccione 'CSV', 'Excel' o 'Regresar'.")
             else:
                 print("No hay notas registradas en el período especificado.")
-                opcion = input("¿Desea regresar al menú de reportes? (S. Sí/ N. No): ").upper()
-                if opcion == "S":
-                    print("Redirigiendo al menú de reportes... ")
-                    break
+                break
         except Error as e:
             print(e)      
         except Exception as ex:
@@ -1604,6 +1601,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
